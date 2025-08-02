@@ -13,7 +13,7 @@ description: A Multi Agent Banking Assistant with Java and Langchain4j
 
 <div align="center">
 
-<img src="docs/assets/robot_redthinking.PNG" alt="AI Agents" width="300"/>
+<img src="robot_redthinking.PNG" alt="AI Agents" width="300"/>
 
 
 # IntelliBank - A Multi Agent Banking Assistant
