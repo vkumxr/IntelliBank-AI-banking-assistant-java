@@ -1,0 +1,15 @@
+# Ignore compiled Java classes
+*.class
+
+# Ignore build output
+target/
+
+# IntelliJ IDEA project settings
+.idea/
+*.iml
+
+# macOS Finder file
+.DS_Store
+
+# Secret config
+.env
