@@ -1,13 +1,15 @@
 package com.azure.assistant;
 
-public class ChatRequest {
-    private String message;
+import java.util.List;
 
-    public String getMessage() {
-        return message;
+public class ChatRequest {
+    private List<ChatMessage> messages;
+
+    public List<ChatMessage> getMessages() {
+        return messages;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessages(List<ChatMessage> messages) {
+        this.messages = messages;
     }
 }
