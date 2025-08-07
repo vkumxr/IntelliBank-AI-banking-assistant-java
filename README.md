@@ -24,6 +24,12 @@ description: A Multi Agent Banking Assistant with Java and Langchain4j
 
 </div>
 
+---
+> ⚙️ **Note:**  
+> This project runs locally using **Ollama LLaMA 3**.  
+> Azure SDK dependencies can included instead of Ollama LLaMA 3. You can use them to connect to Azure's cloud services for response generation.
+---
+
 ## Overview
 
 This project showcases a banking personal assistant with a conversational interface, allowing users to:
