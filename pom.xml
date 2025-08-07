@@ -5,13 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.azure</groupId>
+    <groupId>com.ollama</groupId>
     <artifactId>banking-assistant</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>banking-assistant</name>
-    <description>Spring Boot Azure OpenAI Banking Assistant</description>
+    <description>Spring Boot Banking Assistant using Ollama LLaMA 3 (local inference)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -24,13 +24,12 @@
         <java.version>21</java.version>
     </properties>
 
-    <!-- Use Netty BOM to manage versions -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.118.Final</version> <!-- You can use 4.1.118.Final if needed -->
+                <version>4.1.118.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -44,14 +43,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Azure OpenAI SDK -->
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-ai-openai</artifactId>
-            <version>1.0.0-beta.16</version>
-        </dependency>
-
-        <!-- Explicit Netty Dependencies (version from BOM) -->
+        <!-- Netty (used for HTTP client if you're manually connecting to localhost Ollama) -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
