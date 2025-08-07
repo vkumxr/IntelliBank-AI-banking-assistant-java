@@ -1,26 +1,26 @@
 package com.azure.assistant;
 
-import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.models.ChatCompletions;
-import com.azure.ai.openai.models.ChatCompletionsOptions;
-import com.azure.ai.openai.models.ChatRequestUserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/chat")
+@CrossOrigin(origins = "*")
 public class ChatController {
 
     @Autowired
-    private OpenAIClient openAIClient;
+    private AzureOpenAIService azureOpenAIService;
 
-    private static final String DEPLOYMENT_NAME = "gpt-4"; // replace with your actual deployment name
+    @PostMapping("/chat")
+    public ResponseEntity<Map<String, String>> chat(@RequestBody ChatRequest chatRequest) {
+        String assistantReply = azureOpenAIService.getChatResponse(chatRequest.getMessages());
 
-    @PostMapping
-    public String chat(@RequestBody ChatRequest request) {
-        return "You said: " + request.getMessage();
+        Map<String, String> response = new HashMap<>();
+        response.put("content", assistantReply);
+
+        return ResponseEntity.ok(response);
     }
-
 }

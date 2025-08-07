@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliBank VALLI - AI Banking Assistant</title>
+    <style>
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --tertiary-bg: #2a2a2a;
+            --quaternary-bg: #3a3a3a;
+            --user-bubble: #333333;
+            --bot-bubble: #f5f5f5;
+            --accent: #ffffff;
+            --accent-dim: #cccccc;
+            --font-color: #e8e8e8;
+            --font-dark: #1a1a1a;
+            --border: #444444;
+            --border-light: #666666;
+            --shadow: rgba(255, 255, 255, 0.1);
+            --hover: #555555;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #111111 50%, var(--secondary-bg) 100%);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            color: var(--font-color);
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .valli-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .valli-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-bg);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .valli-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .valli-subtitle {
+            font-size: 14px;
+            color: var(--accent-dim);
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-box {
+            padding: 16px 18px;
+            border-radius: 12px;
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            color: var(--font-color);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-box:hover {
+            background: var(--hover);
+            border-color: var(--border-light);
+            transform: translateX(4px);
+        }
+
+        .action-icon {
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .action-text {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .chat-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .chat-subtitle {
+            font-size: 16px;
+            color: var(--accent-dim);
+            opacity: 0.8;
+        }
+
+        .chat-box {
+            flex: 1;
+            background: var(--secondary-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            gap: 16px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            min-height: 56px;
+            max-height: 120px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            font-size: 15px;
+            background: var(--tertiary-bg);
+            color: var(--font-color);
+            transition: all 0.3s ease;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+            background: var(--quaternary-bg);
+        }
+
+        .chat-input::placeholder {
+            color: var(--accent-dim);
+            opacity: 0.6;
+        }
+
+        .send-button {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: var(--primary-bg);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            padding: 16px 20px;
+            max-width: 80%;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            animation: messageSlide 0.4s ease;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: var(--user-bubble);
+            color: var(--font-color);
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .message.bot {
+            background: var(--bot-bubble);
+            color: var(--font-dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .valli-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .valli-avatar {
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: var(--primary-bg);
+            font-weight: bold;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-dim);
+            font-weight: 500;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        .welcome-message {
+            text-align: center;
+            color: var(--accent-dim);
+            font-style: italic;
+            margin: 40px 0;
+            opacity: 0.8;
+        }
+
+        .ollama-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--accent);
+            z-index: 1000;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes messageSlide {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 16px;
+            }
+
+            .quick-actions {
+                flex-direction: row;
+                min-width: max-content;
+            }
+
+            .action-box {
+                min-width: 140px;
+            }
+
+            .main-chat {
+                padding: 20px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="ollama-status" id="ollamaStatus">🟡 Connecting...</div>
+
+<div class="app-container">
+    <div class="sidebar">
+        <div class="valli-header">
+            <div class="valli-logo">V</div>
+            <div class="valli-title">VALLI</div>
+            <div class="valli-subtitle">AI Banking Assistant</div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="action-box" onclick="simulateQuickAction('Check my account balance')">
+                <span class="action-icon">💰</span>
+                <div class="action-text">Check Balance</div>
+            </div>
+            <div class="action-box" onclick="simulateQuickAction('Transfer money')">
+                <span class="action-icon">🔄</span>
+                <div class="action-text">Transfer Money</div>
+            </div>
+            <div class="action-box" onclick="simulateQuickAction('Investment options')">
+                <span class="action-icon">📈</span>
+                <div class="action-text">Investments</div>
+            </div>
+            <div class="action-box" onclick="simulateQuickAction('Loan information')">
+                <span class="action-icon">🏦</span>
+                <div class="action-text">Loans</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-chat">
+        <div class="chat-header">
+            <div class="chat-title">IntelliBank VALLI</div>
+            <div class="chat-subtitle">Powered by Llama 3</div>
+        </div>
+
+        <div class="chat-box" id="chatMessages">
+            <div class="welcome-message">
+                👋 Hello! I'm VALLI, your AI banking assistant. How can I help you today?
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <textarea class="chat-input" id="messageInput" placeholder="Ask VALLI anything about banking..." rows="1"></textarea>
+            </div>
+            <button class="send-button" id="sendBtn">→</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatMessages = document.getElementById("chatMessages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const ollamaStatus = document.getElementById("ollamaStatus");
+
+    // Conversation context for continuity
+    let conversationHistory = [];
+    let currentContext = null;
+    let ollamaConnected = false;
+
+    // Auto-resize textarea
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // Check Ollama connection
+    async function checkOllamaConnection() {
+        try {
+            const response = await fetch('http://localhost:11434/api/tags');
+            if (response.ok) {
+                ollamaConnected = true;
+                ollamaStatus.innerHTML = '🟢 Ollama Connected';
+                ollamaStatus.style.color = 'var(--accent)';
+            }
+        } catch (error) {
+            ollamaConnected = false;
+            ollamaStatus.innerHTML = '🔴 Offline Mode';
+            ollamaStatus.style.color = 'var(--accent-dim)';
+        }
+    }
+
+    // Banking responses with context awareness
+    const bankingResponses = {
+        balance: [
+            "💰 Your balance: $2,847.32 (Checking) + $5,240.18 (Savings). Need details?",
+            "🏦 Current: $8,087.50 total across accounts. Want a breakdown?",
+            "💵 Checking: $2,847.32 | Savings: $5,240.18. All good!"
+        ],
+        transfer: [
+            "🔄 I can help transfer money. What amount and to whom?",
+            "💸 Transfer ready! Need recipient details and amount.",
+            "🚀 Quick transfer setup. Amount and destination?"
+        ],
+        investment: [
+            "📈 Current rates: Savings 4.2%, Index funds 8%. Interested?",
+            "💎 Investment options: Conservative, Balanced, or Aggressive?",
+            "🎯 Ready to invest? What's your risk preference?"
+        ],
+        loan: [
+            "🏦 Pre-approved options: Personal $50k, Auto $75k, Home $500k. Which?",
+            "💳 Great credit score! You qualify for premium rates. What loan?",
+            "⚡ Quick approval available. What type of loan do you need?"
+        ],
+        minor_account: [
+            "👶 For a minor account, I need: birth certificate, SSN, your ID, and proof of address. Ready to start?",
+            "🏦 Minor account setup: We'll need documentation and your parental consent. Shall I guide you?",
+            "📋 To open your son's account, let's gather the required documents first. Have his birth certificate ready?"
+        ]
+    };
+
+    // Context-aware response system
+    const contextResponses = {
+        minor_account_process: {
+            "yes": "Great! Let's start with step 1: Do you have your son's birth certificate and Social Security number ready?",
+            "continue": "Perfect! Next, I'll need your government-issued ID and a recent utility bill for address verification. Have these available?",
+            "documents_ready": "Excellent! Now I'll walk you through our online application. You can start at intellibank.com/accounts/minor or visit any branch. Prefer online or in-person?",
+            "online": "Perfect! Go to intellibank.com → Accounts → Open New Account → Minor Savings. The form takes about 5 minutes. Need help with anything specific?",
+            "branch": "Great choice! Our nearest branch is at [location]. Bring all documents and your son. Account opens same day. Want the address?"
+        },
+        transfer_process: {
+            "yes": "What amount would you like to transfer?",
+            "amount_provided": "Got it! Who's the recipient? I'll need their name and account details.",
+            "recipient_provided": "Perfect! Choose transfer speed: Instant (free), Standard (1-2 days), or Wire ($15 fee)?",
+            "speed_selected": "All set! I'll process your transfer. You'll get a confirmation within minutes."
+        }
+    };
+
+    // Ollama API integration with context
+    async function queryOllama(prompt) {
+        if (!ollamaConnected) return null;
+
+        try {
+            const contextPrompt = currentContext
+                ? `Previous context: ${currentContext}. Current query: ${prompt}`
+                : prompt;
+
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'llama3',
+                    prompt: `You are VALLI, a concise AI banking assistant. Give SHORT responses (1-2 sentences max). Remember conversation context. ${contextPrompt}`,
+                    stream: false,
+                    options: {
+                        temperature: 0.3,
+                        top_k: 20,
+                        top_p: 0.8,
+                        max_tokens: 80
+                    }
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.response.trim();
+            }
+        } catch (error) {
+            console.error('Ollama error:', error);
+        }
+        return null;
+    }
+
+    function addMessage(content, type = 'bot') {
+        const div = document.createElement("div");
+        div.classList.add("message", type);
+
+        if (type === 'bot' && content === "typing") {
+            div.innerHTML = `
+                <div class="valli-badge">
+                    <div class="valli-avatar">V</div>
+                    VALLI
+                </div>
+                <div class="typing-indicator">
+                    <span>Thinking...</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'bot') {
+            div.innerHTML = `
+                <div class="valli-badge">
+                    <div class="valli-avatar">V</div>
+                    VALLI AI ASSISTANT
+                </div>
+                <div>${content}</div>
+            `;
+        } else {
+            div.textContent = content;
+        }
+
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Store in conversation history
+        conversationHistory.push({ type, content });
+        if (conversationHistory.length > 10) {
+            conversationHistory.shift(); // Keep last 10 messages
+        }
+
+        return div;
+    }
+
+    function detectContext(input) {
+        const lower = input.toLowerCase();
+
+        if (lower.includes('minor') || lower.includes('son') || lower.includes('child') || lower.includes('kid')) {
+            return 'minor_account_process';
+        }
+        if (lower.includes('transfer') || lower.includes('send money')) {
+            return 'transfer_process';
+        }
+        return null;
+    }
+
+    function getContextualResponse(input, context) {
+        const lower = input.toLowerCase();
+
+        if (context === 'minor_account_process') {
+            if (lower.includes('yes') || lower === 'yes') {
+                return contextResponses.minor_account_process.yes;
+            }
+            if (lower.includes('ready') || lower.includes('continue')) {
+                return contextResponses.minor_account_process.continue;
+            }
+            if (lower.includes('online')) {
+                return contextResponses.minor_account_process.online;
+            }
+            if (lower.includes('branch') || lower.includes('visit')) {
+                return contextResponses.minor_account_process.branch;
+            }
+        }
+
+        if (context === 'transfer_process') {
+            if (lower.includes('yes') || lower === 'yes') {
+                return contextResponses.transfer_process.yes;
+            }
+            if (lower.match(/\$\d+/) || lower.match(/\d+/)) {
+                return contextResponses.transfer_process.amount_provided;
+            }
+        }
+
+        return null;
+    }
+
+    async function getAIResponse(userInput) {
+        // Check for contextual responses first
+        if (currentContext) {
+            const contextualResponse = getContextualResponse(userInput, currentContext);
+            if (contextualResponse) {
+                return contextualResponse;
+            }
+        }
+
+        // Try Ollama with conversation context
+        const ollamaResponse = await queryOllama(userInput);
+        if (ollamaResponse) {
+            return ollamaResponse;
+        }
+
+        // Detect new context
+        const newContext = detectContext(userInput);
+        if (newContext) {
+            currentContext = newContext;
+        }
+
+        // Fallback responses
+        const input = userInput.toLowerCase();
+
+        if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+            return "👋 Hi! I'm VALLI, your AI banking assistant. How can I help?";
+        }
+
+        if (input.includes('minor') || input.includes('son') || input.includes('child account')) {
+            currentContext = 'minor_account_process';
+            return getRandomResponse(bankingResponses.minor_account);
+        }
+
+        if (input.includes('balance')) return getRandomResponse(bankingResponses.balance);
+        if (input.includes('transfer')) return getRandomResponse(bankingResponses.transfer);
+        if (input.includes('invest')) return getRandomResponse(bankingResponses.investment);
+        if (input.includes('loan')) return getRandomResponse(bankingResponses.loan);
+
+        if (input === 'yes' && currentContext) {
+            return "I need more context. What would you like to proceed with?";
+        }
+
+        return "🎯 I can help with: Accounts, Transfers, Investments, Loans. What do you need?";
+    }
+
+    function getRandomResponse(responses) {
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    async function sendMessage() {
+        const input = messageInput.value.trim();
+        if (!input) return;
+
+        addMessage(input, "user");
+        messageInput.value = "";
+        messageInput.style.height = 'auto';
+
+        const typingDiv = addMessage("typing", "bot");
+
+        try {
+            const response = await getAIResponse(input);
+            typingDiv.remove();
+            addMessage(response, "bot");
+        } catch (error) {
+            typingDiv.remove();
+            addMessage("Sorry, I'm having technical difficulties. Please try again.", "bot");
+        }
+    }
+
+    function simulateQuickAction(text) {
+        messageInput.value = text;
+        sendMessage();
+    }
+
+    // Event listeners
+    sendBtn.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", e => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Initialize
+    window.onload = () => {
+        messageInput.focus();
+        checkOllamaConnection();
+        setInterval(checkOllamaConnection, 30000);
+    };
+</script>
+</body>
+</html>
