@@ -72,4 +72,4 @@ The personal banking assistant is designed as a [vertical multi-agent system](./
 - Git  
 - PowerShell 7+ (for Windows users)
 
-  Done
+No
