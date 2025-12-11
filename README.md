@@ -70,6 +70,6 @@ The personal banking assistant is designed as a [vertical multi-agent system](./
 - Maven 3.8+  
 - Node.js  
 - Git  
-- PowerShell 7+ (for Windows users
+- PowerShell 7+ (for Windows users)
 ---
 
