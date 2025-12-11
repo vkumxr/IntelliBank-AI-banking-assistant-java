@@ -1,4 +1,4 @@
----
+s---
 page_type: sample
 languages:
 - java
